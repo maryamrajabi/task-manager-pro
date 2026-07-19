@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.welcome {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.welcome__content {
+  width: min(100%, 720px);
+}
+
+.welcome__badge {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.875rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 1;
+}
+
+p {
+  max-width: 600px;
+  margin: 1.5rem auto;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+button {
+  padding: 0.875rem 1.5rem;
+  border: 0;
+  border-radius: 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
