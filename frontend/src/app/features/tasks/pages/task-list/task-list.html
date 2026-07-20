@@ -1,0 +1,41 @@
+<section class="page">
+  <header class="page__header">
+    <div>
+      <p class="page__eyebrow">Task Management</p>
+      <h1>Tasks</h1>
+      <p class="page__description">
+        Create, organize, and track all your tasks in one place.
+      </p>
+    </div>
+
+    <button type="button">
+      Add Task
+    </button>
+  </header>
+
+  <div class="toolbar">
+    <input
+      type="search"
+      placeholder="Search tasks..."
+      aria-label="Search tasks"
+    >
+
+    <select aria-label="Filter tasks by status">
+      <option value="all">All statuses</option>
+      <option value="todo">To do</option>
+      <option value="in-progress">In progress</option>
+      <option value="completed">Completed</option>
+    </select>
+  </div>
+
+  <div class="empty-state">
+    <h2>No tasks yet</h2>
+    <p>
+      Create your first task to start tracking your work.
+    </p>
+
+    <button type="button">
+      Create First Task
+    </button>
+  </div>
+</section>
