@@ -14,6 +14,8 @@ import java.util.Map;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import com.taskmanagerpro.backend.auth.exception.InvalidCredentialsException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -34,9 +36,6 @@ public class GlobalExceptionHandler {
                 .status(status)
                 .body(error);
     }
-
-
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidation(
@@ -69,5 +68,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(status)
                 .body(error);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiError> handleInvalidCredentials(
+        InvalidCredentialsException exception
+    ) {
+        ApiError error = new ApiError(
+            HttpStatus.UNAUTHORIZED.value(),
+            HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+            exception.getMessage(),
+            Instant.now()
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(error);
     }
 }

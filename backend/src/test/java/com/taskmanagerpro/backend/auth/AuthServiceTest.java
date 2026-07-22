@@ -22,6 +22,12 @@ import com.taskmanagerpro.backend.auth.exception.EmailAlreadyExistsException;
 import com.taskmanagerpro.backend.user.User;
 import com.taskmanagerpro.backend.user.UserRepository;
 
+import java.util.Optional;
+
+import com.taskmanagerpro.backend.auth.dto.LoginResponse;
+import com.taskmanagerpro.backend.auth.dto.LoginRequest;
+import com.taskmanagerpro.backend.auth.exception.InvalidCredentialsException;
+
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -63,7 +69,6 @@ class AuthServiceTest {
         verify(userRepository, never())
                 .save(any(User.class));
     }
-
 
     @Test
     void register_whenRequestIsValid_savesUserAndReturnsResponse() {
@@ -124,6 +129,102 @@ class AuthServiceTest {
                 savedUser.getPasswordHash()
         );
 
-
     }
+
+    @Test
+    void login_shouldThrowInvalidCredentials_whenEmailDoesNotExist() {
+        LoginRequest request = new LoginRequest(
+            " Missing@Example.com ",
+            "password123"
+        );
+
+        when(userRepository.findByEmail("missing@example.com"))
+            .thenReturn(Optional.empty());
+
+        assertThrows(
+            InvalidCredentialsException.class,
+            () -> authService.login(request)
+        );
+
+        verify(userRepository).findByEmail("missing@example.com");
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    void login_shouldThrowInvalidCredentials_whenPasswordIsIncorrect() {
+        LoginRequest request = new LoginRequest(
+            " Maryam@Example.com ",
+            "wrong-password"
+        );
+
+        User user = new User(
+            "Maryam Rajabi",
+            "maryam@example.com",
+            "{bcrypt}stored-password-hash"
+        );
+
+        when(userRepository.findByEmail("maryam@example.com"))
+            .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+            "wrong-password",
+            "{bcrypt}stored-password-hash"
+        )).thenReturn(false);
+
+        assertThrows(
+            InvalidCredentialsException.class,
+            () -> authService.login(request)
+        );
+
+        verify(userRepository).findByEmail("maryam@example.com");
+
+        verify(passwordEncoder).matches(
+            "wrong-password",
+            "{bcrypt}stored-password-hash"
+        );
+    }
+
+    @Test
+    void login_shouldReturnUser_whenCredentialsAreValid() {
+        LoginRequest request = new LoginRequest(
+            " MARYAM@EXAMPLE.COM ",
+            "password123"
+        );
+
+        User user = new User(
+            "Maryam Rajabi",
+            "maryam@example.com",
+            "{bcrypt}stored-password-hash"
+        );
+
+        when(userRepository.findByEmail("maryam@example.com"))
+            .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+            "password123",
+            "{bcrypt}stored-password-hash"
+        )).thenReturn(true);
+
+        LoginResponse response = authService.login(request);
+
+        assertEquals(
+            "Maryam Rajabi",
+            response.fullName()
+        );
+
+        assertEquals(
+            "maryam@example.com",
+            response.email()
+        );
+
+        verify(userRepository)
+            .findByEmail("maryam@example.com");
+
+        verify(passwordEncoder)
+            .matches(
+                "password123",
+                "{bcrypt}stored-password-hash"
+            );
+    }
+
 }

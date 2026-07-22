@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.taskmanagerpro.backend.auth.dto.RegisterRequest;
 import com.taskmanagerpro.backend.auth.dto.RegisterResponse;
 
+import com.taskmanagerpro.backend.auth.dto.LoginRequest;
+import com.taskmanagerpro.backend.auth.dto.LoginResponse;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,4 +32,9 @@ public class AuthController {
     ) {
         return authService.register(request);
     }
+
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
+}
 }

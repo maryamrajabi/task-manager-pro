@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import com.taskmanagerpro.backend.auth.EmailNormalizer;
+
 public record RegisterRequest(
 
         @NotBlank(message = "Full name is required")
@@ -24,4 +26,9 @@ public record RegisterRequest(
         String password
 
 ) {
+
+    public RegisterRequest {
+        email = EmailNormalizer.normalize(email);
+    }
+
 }
