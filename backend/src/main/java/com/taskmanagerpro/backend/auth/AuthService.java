@@ -19,13 +19,15 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -38,14 +40,12 @@ public class AuthService {
         }
 
         String passwordHash = passwordEncoder.encode(
-                request.password()
-        );
+                request.password());
 
         User user = new User(
                 normalizedFullName,
                 normalizedEmail,
-                passwordHash
-        );
+                passwordHash);
 
         User savedUser = userRepository.save(user);
 
@@ -53,8 +53,7 @@ public class AuthService {
                 savedUser.getId(),
                 savedUser.getFullName(),
                 savedUser.getEmail(),
-                savedUser.getCreatedAt()
-        );
+                savedUser.getCreatedAt());
     }
 
     @Transactional(readOnly = true)
@@ -62,21 +61,24 @@ public class AuthService {
         String normalizedEmail = EmailNormalizer.normalize(request.email());
 
         User user = userRepository.findByEmail(normalizedEmail)
-            .orElseThrow(InvalidCredentialsException::new);
+                .orElseThrow(InvalidCredentialsException::new);
 
         boolean passwordMatches = passwordEncoder.matches(
-            request.password(),
-            user.getPasswordHash()
-        );
+                request.password(),
+                user.getPasswordHash());
 
         if (!passwordMatches) {
             throw new InvalidCredentialsException();
         }
 
+        String token = jwtService.generateToken(
+                user.getEmail());
+
         return new LoginResponse(
-            user.getId(),
-            user.getFullName(),
-            user.getEmail()
-        );
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                token);
     }
+
 }

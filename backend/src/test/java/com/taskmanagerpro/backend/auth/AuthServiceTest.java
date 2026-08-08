@@ -5,10 +5,12 @@ import com.taskmanagerpro.backend.auth.dto.RegisterResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,26 +42,26 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    @Mock
+    private JwtService jwtService;
+
     @Test
     void register_whenEmailAlreadyExists_throwsException() {
         RegisterRequest request = new RegisterRequest(
                 "Maryam Rajabi",
                 "MARYAM@EXAMPLE.COM",
-                "MyPassword123"
-        );
+                "MyPassword123");
 
         when(userRepository.existsByEmail("maryam@example.com"))
                 .thenReturn(true);
 
         EmailAlreadyExistsException exception = assertThrows(
                 EmailAlreadyExistsException.class,
-                () -> authService.register(request)
-        );
+                () -> authService.register(request));
 
         assertEquals(
                 "An account already exists for email: maryam@example.com",
-                exception.getMessage()
-        );
+                exception.getMessage());
 
         verify(userRepository)
                 .existsByEmail("maryam@example.com");
@@ -75,8 +77,7 @@ class AuthServiceTest {
         RegisterRequest request = new RegisterRequest(
                 "  Maryam Rajabi  ",
                 "MARYAM@EXAMPLE.COM",
-                "MyPassword123"
-        );
+                "MyPassword123");
 
         when(userRepository.existsByEmail("maryam@example.com"))
                 .thenReturn(false);
@@ -87,27 +88,23 @@ class AuthServiceTest {
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        RegisterResponse response =
-                authService.register(request);
+        RegisterResponse response = authService.register(request);
 
         assertEquals(
                 "Maryam Rajabi",
-                response.fullName()
-        );
+                response.fullName());
 
         assertEquals(
                 "maryam@example.com",
-                response.email()
-        );
+                response.email());
 
         verify(passwordEncoder)
                 .encode("MyPassword123");
 
-//         verify(userRepository)
-//                 .save(any(User.class));
+        // verify(userRepository)
+        // .save(any(User.class));
 
-        ArgumentCaptor<User> userCaptor =
-                ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         verify(userRepository)
                 .save(userCaptor.capture());
@@ -116,35 +113,30 @@ class AuthServiceTest {
 
         assertEquals(
                 "Maryam Rajabi",
-                savedUser.getFullName()
-        );
+                savedUser.getFullName());
 
         assertEquals(
                 "maryam@example.com",
-                savedUser.getEmail()
-        );
+                savedUser.getEmail());
 
         assertEquals(
                 "{bcrypt}hashed-password",
-                savedUser.getPasswordHash()
-        );
+                savedUser.getPasswordHash());
 
     }
 
     @Test
     void login_shouldThrowInvalidCredentials_whenEmailDoesNotExist() {
         LoginRequest request = new LoginRequest(
-            " Missing@Example.com ",
-            "password123"
-        );
+                " Missing@Example.com ",
+                "password123");
 
         when(userRepository.findByEmail("missing@example.com"))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         assertThrows(
-            InvalidCredentialsException.class,
-            () -> authService.login(request)
-        );
+                InvalidCredentialsException.class,
+                () -> authService.login(request));
 
         verify(userRepository).findByEmail("missing@example.com");
         verifyNoInteractions(passwordEncoder);
@@ -153,78 +145,75 @@ class AuthServiceTest {
     @Test
     void login_shouldThrowInvalidCredentials_whenPasswordIsIncorrect() {
         LoginRequest request = new LoginRequest(
-            " Maryam@Example.com ",
-            "wrong-password"
-        );
+                " Maryam@Example.com ",
+                "wrong-password");
 
         User user = new User(
-            "Maryam Rajabi",
-            "maryam@example.com",
-            "{bcrypt}stored-password-hash"
-        );
+                "Maryam Rajabi",
+                "maryam@example.com",
+                "{bcrypt}stored-password-hash");
 
         when(userRepository.findByEmail("maryam@example.com"))
-            .thenReturn(Optional.of(user));
+                .thenReturn(Optional.of(user));
 
         when(passwordEncoder.matches(
-            "wrong-password",
-            "{bcrypt}stored-password-hash"
-        )).thenReturn(false);
+                "wrong-password",
+                "{bcrypt}stored-password-hash")).thenReturn(false);
 
         assertThrows(
-            InvalidCredentialsException.class,
-            () -> authService.login(request)
-        );
+                InvalidCredentialsException.class,
+                () -> authService.login(request));
 
         verify(userRepository).findByEmail("maryam@example.com");
 
         verify(passwordEncoder).matches(
-            "wrong-password",
-            "{bcrypt}stored-password-hash"
-        );
+                "wrong-password",
+                "{bcrypt}stored-password-hash");
     }
 
     @Test
     void login_shouldReturnUser_whenCredentialsAreValid() {
         LoginRequest request = new LoginRequest(
-            " MARYAM@EXAMPLE.COM ",
-            "password123"
-        );
+                " MARYAM@EXAMPLE.COM ",
+                "password123");
 
         User user = new User(
-            "Maryam Rajabi",
-            "maryam@example.com",
-            "{bcrypt}stored-password-hash"
-        );
+                "Maryam Rajabi",
+                "maryam@example.com",
+                "{bcrypt}stored-password-hash");
 
         when(userRepository.findByEmail("maryam@example.com"))
-            .thenReturn(Optional.of(user));
+                .thenReturn(Optional.of(user));
 
         when(passwordEncoder.matches(
-            "password123",
-            "{bcrypt}stored-password-hash"
-        )).thenReturn(true);
+                "password123",
+                "{bcrypt}stored-password-hash")).thenReturn(true);
+
+        when(jwtService.generateToken(anyString()))
+                .thenReturn("fake-jwt-token");
 
         LoginResponse response = authService.login(request);
 
         assertEquals(
-            "Maryam Rajabi",
-            response.fullName()
+                "Maryam Rajabi",
+                response.fullName());
+
+        assertEquals(
+                "maryam@example.com",
+                response.email()
         );
 
         assertEquals(
-            "maryam@example.com",
-            response.email()
-        );
+                "fake-jwt-token",
+                response.token());
 
         verify(userRepository)
-            .findByEmail("maryam@example.com");
+                .findByEmail("maryam@example.com");
 
         verify(passwordEncoder)
-            .matches(
-                "password123",
-                "{bcrypt}stored-password-hash"
-            );
+                .matches(
+                        "password123",
+                        "{bcrypt}stored-password-hash");
     }
 
 }
