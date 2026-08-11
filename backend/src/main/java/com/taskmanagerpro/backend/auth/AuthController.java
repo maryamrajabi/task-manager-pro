@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import com.taskmanagerpro.backend.auth.dto.CurrentUserResponse;
 import com.taskmanagerpro.backend.auth.dto.RegisterRequest;
 import com.taskmanagerpro.backend.auth.dto.RegisterResponse;
-
 import com.taskmanagerpro.backend.auth.dto.LoginRequest;
 import com.taskmanagerpro.backend.auth.dto.LoginResponse;
 
@@ -36,5 +38,15 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
-}
+    }
+
+    @GetMapping("/me")
+    public CurrentUserResponse me(
+            Authentication authentication
+    ) {
+        return new CurrentUserResponse(
+                authentication.getName()
+        );
+    }
+
 }
