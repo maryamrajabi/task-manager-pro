@@ -1,0 +1,44 @@
+@use 'abstracts' as ds;
+
+:host {
+  display: block;
+}
+
+.input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding-inline: ds.$spacing-3;
+
+  border: 1px solid ds.$color-border;
+  border-radius: ds.$radius-md;
+
+  background: ds.$color-surface;
+  color: ds.$color-text-primary;
+
+  transition:
+    border-color ds.$transition-fast,
+    box-shadow ds.$transition-fast;
+
+  &::placeholder {
+    color: ds.$color-text-secondary;
+  }
+
+  &:focus {
+    border-color: ds.$color-primary;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(79 70 229 / 12%);
+  }
+
+  &:focus-visible {
+    @include ds.focus-ring;
+  }
+
+  &--invalid {
+    border-color: ds.$color-danger;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,57 @@
+<div
+  class="auth-page"
+  *transloco="let t"
+>
+  <main class="auth-card">
+    <header class="auth-header">
+      <p class="auth-eyebrow">
+        {{ t('auth.login.eyebrow') }}
+      </p>
+
+      <h1 class="auth-title">
+        {{ t('auth.login.title') }}
+      </h1>
+
+      <p class="auth-description">
+        {{ t('auth.login.description') }}
+      </p>
+    </header>
+
+    <form class="auth-form">
+      <app-form-field
+        [label]="t('auth.login.emailLabel')"
+        controlId="email"
+        [state]="loginForm.email()"
+      >
+        <app-input
+          id="email"
+          type="email"
+          autocomplete="email"
+          [placeholder]="t('auth.login.emailPlaceholder')"
+          [formField]="loginForm.email"
+        />
+      </app-form-field>
+
+      <app-form-field
+        [label]="t('auth.login.passwordLabel')"
+        controlId="password"
+        [state]="loginForm.password()"
+      >
+        <app-input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          [placeholder]="t('auth.login.passwordPlaceholder')"
+          [formField]="loginForm.password"
+        />
+      </app-form-field>
+
+      <app-button
+        type="submit"
+        [disabled]="loginForm().invalid()"
+      >
+        {{ t('auth.login.submit') }}
+      </app-button>
+    </form>
+  </main>
+</div>

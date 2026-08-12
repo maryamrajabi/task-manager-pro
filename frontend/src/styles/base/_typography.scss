@@ -1,0 +1,37 @@
+@use '../abstracts' as ds;
+
+// ========================================
+// Global Typography
+// ========================================
+
+html {
+  font-family: ds.$font-family-base;
+  font-size: 100%;
+}
+
+body {
+  color: ds.$color-text-primary;
+  font-size: ds.$font-size-base;
+  font-weight: ds.$font-weight-normal;
+  line-height: ds.$line-height-normal;
+  background: ds.$color-background;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: ds.$line-height-tight;
+}

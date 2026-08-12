@@ -1,0 +1,12 @@
+{
+  "login": {
+    "eyebrow": "Task Manager Pro",
+    "title": "خوش آمدید",
+    "description": "برای مدیریت وظایف و تمرکز بهتر وارد حساب خود شوید.",
+    "emailLabel": "ایمیل",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "رمز عبور",
+    "passwordPlaceholder": "رمز عبور خود را وارد کنید",
+    "submit": "ورود"
+  }
+}

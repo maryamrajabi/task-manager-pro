@@ -1,0 +1,18 @@
+<input
+  #inputElement
+  class="input"
+  [id]="id()"
+  [type]="type()"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  [attr.autocomplete]="autocomplete()"
+  [disabled]="disabled()"
+  [readOnly]="readonly()"
+  [required]="required()"
+  [attr.minlength]="minLength()"
+  [attr.maxlength]="maxLength()"
+  [attr.aria-invalid]="touched() && invalid()"
+  [class.input--invalid]="touched() && invalid()"
+  (input)="onInput($event)"
+  (blur)="touch.emit()"
+/>

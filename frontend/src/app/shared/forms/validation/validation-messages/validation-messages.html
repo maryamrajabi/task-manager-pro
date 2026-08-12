@@ -1,0 +1,12 @@
+@if (errors().length > 0) {
+  <div
+    class="validation-messages"
+    aria-live="polite"
+  >
+    @for (error of errors(); track $index) {
+      <p class="validation-message">
+        {{ messageKey(error) | transloco }}
+      </p>
+    }
+  </div>
+}

@@ -1,0 +1,57 @@
+@use 'abstracts' as ds;
+
+:host {
+  display: block;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: ds.$spacing-6;
+}
+
+.auth-card {
+  width: min(100%, ds.$auth-card-max-width);
+  padding: ds.$spacing-8;
+
+  background: ds.$color-surface;
+  border: 1px solid ds.$color-border;
+  border-radius: ds.$radius-lg;
+
+  box-shadow:
+    0 1px 3px rgb(15 23 42 / 8%),
+    0 10px 30px rgb(15 23 42 / 6%);
+}
+
+.auth-header {
+  margin-bottom: ds.$spacing-8;
+}
+
+.auth-eyebrow {
+  margin: 0 0 ds.$spacing-2;
+
+  color: ds.$color-primary;
+
+  font-size: ds.$font-size-sm;
+  font-weight: ds.$font-weight-bold;
+}
+
+.auth-title {
+  margin: 0;
+
+  font-size: ds.$font-size-3xl;
+  font-weight: ds.$font-weight-bold;
+}
+
+.auth-description {
+  margin: ds.$spacing-3 0 0;
+
+  color: ds.$color-text-secondary;
+  line-height: ds.$line-height-relaxed;
+}
+
+.auth-form {
+  display: grid;
+  gap: ds.$spacing-5;
+}

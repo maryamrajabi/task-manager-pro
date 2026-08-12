@@ -1,0 +1,14 @@
+@use 'abstracts' as ds;
+
+.validation-messages {
+  display: grid;
+  gap: ds.$spacing-1;
+}
+
+.validation-message {
+  margin: 0;
+
+  color: ds.$color-danger;
+  font-size: ds.$font-size-sm;
+  line-height: ds.$line-height-normal;
+}

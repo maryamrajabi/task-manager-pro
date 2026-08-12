@@ -1,0 +1,21 @@
+@use 'abstracts' as ds;
+
+:host {
+  display: block;
+}
+
+.form-field {
+  display: grid;
+  gap: ds.$spacing-2;
+}
+
+.form-field__label {
+  color: ds.$color-text-primary;
+
+  font-size: ds.$font-size-sm;
+  font-weight: ds.$font-weight-semibold;
+}
+
+.form-field__required {
+  color: ds.$color-danger;
+}
