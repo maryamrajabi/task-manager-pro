@@ -23,7 +23,7 @@ import {
   AppFormField,
   AppInput,
 } from '@shared';
-
+import { AuthTokenStorage } from '../../storage/auth-token-storage';
 import { AuthApiService } from '../../data-access/auth-api.service';
 
 interface LoginFormModel {
@@ -49,6 +49,7 @@ interface LoginFormModel {
 })
 export class Login {
   private readonly authApi = inject(AuthApiService);
+  private readonly tokenStorage = inject(AuthTokenStorage);
 
   readonly loginModel = signal<LoginFormModel>({
     email: '',
@@ -74,6 +75,10 @@ export class Login {
               this.authApi.login(
                 field().value(),
               ),
+            );
+
+            this.tokenStorage.set(
+              response.token,
             );
             return;
           } catch (error) {

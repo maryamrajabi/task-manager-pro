@@ -6,7 +6,7 @@ import {
 } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { vi } from 'vitest';
-
+import { AuthTokenStorage } from '../../storage/auth-token-storage';
 import { AuthApiService } from '../../data-access/auth-api.service';
 import { getTranslocoTestingModule } from '../../../../../testing/transloco-testing';
 
@@ -16,12 +16,22 @@ const authApiMock = {
   login: vi.fn(),
 };
 
+const tokenStorageMock = {
+  set: vi.fn(),
+  get: vi.fn(),
+  remove: vi.fn(),
+};
+
 describe('Login', () => {
   let fixture: ComponentFixture<Login>;
   let component: Login;
 
   beforeEach(async () => {
     authApiMock.login.mockReset();
+
+    tokenStorageMock.set.mockReset();
+    tokenStorageMock.get.mockReset();
+    tokenStorageMock.remove.mockReset();
 
     authApiMock.login.mockReturnValue(
       of({
@@ -41,6 +51,10 @@ describe('Login', () => {
         {
           provide: AuthApiService,
           useValue: authApiMock,
+        },
+        {
+          provide: AuthTokenStorage,
+          useValue: tokenStorageMock,
         },
       ],
     }).compileComponents();
@@ -534,6 +548,88 @@ describe('Login', () => {
     expect(
       host.querySelector('.auth-error'),
     ).toBeNull();
+  });
+
+  it('should store the access token after a successful login', async () => {
+    component.loginModel.set({
+      email: 'user@example.com',
+      password: 'TestPass123!',
+    });
+
+    fixture.detectChanges();
+
+    const host =
+      fixture.nativeElement as HTMLElement;
+
+    const form =
+      host.querySelector<HTMLFormElement>('form');
+
+    form!.dispatchEvent(
+      new Event('submit', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+
+    await vi.waitFor(() => {
+      expect(
+        tokenStorageMock.set,
+      ).toHaveBeenCalledTimes(1);
+    });
+
+    expect(
+      tokenStorageMock.set,
+    ).toHaveBeenCalledWith(
+      'test-token',
+    );
+  });
+
+  it('should not store a token when login fails', async () => {
+    authApiMock.login.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 401,
+            statusText: 'Unauthorized',
+          }),
+      ),
+    );
+
+    component.loginModel.set({
+      email: 'user@example.com',
+      password: 'WrongPass123!',
+    });
+
+    fixture.detectChanges();
+
+    const host =
+      fixture.nativeElement as HTMLElement;
+
+    const form =
+      host.querySelector<HTMLFormElement>('form');
+
+    form!.dispatchEvent(
+      new Event('submit', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+
+    await vi.waitFor(() => {
+      expect(
+        component.loginForm()
+          .errors()
+          .some(
+            (error) =>
+              error.kind ===
+              'invalidCredentials',
+          ),
+      ).toBe(true);
+    });
+
+    expect(
+      tokenStorageMock.set,
+    ).not.toHaveBeenCalled();
   });
 
 });
