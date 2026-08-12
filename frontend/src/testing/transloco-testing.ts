@@ -23,6 +23,11 @@ export function getTranslocoTestingModule() {
           passwordLabel: 'Password',
           passwordPlaceholder: 'Enter your password',
           submit: 'Sign in',
+          errors: {
+            invalidCredentials: 'The email or password is incorrect.',
+            network: 'Unable to connect to the server. Please try again.',
+            server: 'Something went wrong. Please try again later.',
+          },
         },
       },
     },

@@ -17,7 +17,10 @@
       </p>
     </header>
 
-    <form class="auth-form">
+    <form
+      class="auth-form"
+      [formRoot]="loginForm"
+    >
       <app-form-field
         [label]="t('auth.login.emailLabel')"
         controlId="email"
@@ -46,9 +49,19 @@
         />
       </app-form-field>
 
+      @if (loginErrorKey(); as errorKey) {
+        <div
+          class="auth-error"
+          role="alert"
+        >
+          {{ t(errorKey) }}
+        </div>
+      }
+
       <app-button
         type="submit"
         [disabled]="loginForm().invalid()"
+        [loading]="loginForm().submitting()"
       >
         {{ t('auth.login.submit') }}
       </app-button>

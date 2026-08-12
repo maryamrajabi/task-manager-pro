@@ -55,3 +55,14 @@
   display: grid;
   gap: ds.$spacing-5;
 }
+
+.auth-error {
+  margin: 0;
+  padding: ds.$spacing-3 ds.$spacing-4;
+
+  color: ds.$color-danger;
+  font-size: ds.$font-size-sm;
+
+  border: 1px solid ds.$color-danger;
+  border-radius: ds.$radius-md;
+}

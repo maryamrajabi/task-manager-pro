@@ -7,6 +7,11 @@
     "emailPlaceholder": "you@example.com",
     "passwordLabel": "رمز عبور",
     "passwordPlaceholder": "رمز عبور خود را وارد کنید",
-    "submit": "ورود"
+    "submit": "ورود",
+    "errors": {
+      "invalidCredentials": "ایمیل یا رمز عبور صحیح نیست.",
+      "network": "ارتباط با سرور برقرار نشد. دوباره تلاش کنید.",
+      "server": "خطایی رخ داد. لطفاً بعداً دوباره تلاش کنید."
+    }
   }
 }
