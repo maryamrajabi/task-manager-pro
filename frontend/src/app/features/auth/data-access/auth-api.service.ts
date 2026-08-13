@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { AUTH_API_ENDPOINTS } from '../config/auth-api-endpoints';
 import { CurrentUser } from '../models/current-user';
 import { LoginRequest } from '../models/login-request';
 import { LoginResponse } from '../models/login-response';
@@ -12,13 +13,18 @@ import { LoginResponse } from '../models/login-response';
 export class AuthApiService {
   private readonly http = inject(HttpClient);
 
-  private readonly baseUrl = '/api/auth';
-
-  login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, request);
+  login(
+    request: LoginRequest,
+  ): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      AUTH_API_ENDPOINTS.login,
+      request,
+    );
   }
 
   getCurrentUser(): Observable<CurrentUser> {
-    return this.http.get<CurrentUser>(`${this.baseUrl}/me`);
+    return this.http.get<CurrentUser>(
+      AUTH_API_ENDPOINTS.currentUser,
+    );
   }
 }
